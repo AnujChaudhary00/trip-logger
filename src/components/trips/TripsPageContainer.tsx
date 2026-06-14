@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { createRipple } from '@/lib/ripple'
 import { TripLoader } from '@/components/ui/TripLoader'
 import { OfflineIndicator } from '@/components/ui/OfflineIndicator'
@@ -99,21 +100,82 @@ export function TripsPageContainer() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="relative min-h-screen">
+
+      {/* Subtle travel background */}
+      <svg
+        className="pointer-events-none fixed inset-0 h-full w-full text-primary opacity-[0.045] dark:opacity-[0.07]"
+        viewBox="0 0 1440 900"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMidYMid slice"
+        fill="none"
+        aria-hidden="true"
+      >
+        {/* Mountain range — right half */}
+        <path
+          d="M780 720 L870 530 L940 610 L1040 420 L1130 510 L1230 360 L1320 440 L1390 370 L1440 400 L1440 720 Z"
+          fill="currentColor"
+        />
+        {/* Gentle foreground slope */}
+        <path
+          d="M0 780 Q360 750 720 765 Q1080 780 1440 755 L1440 900 L0 900 Z"
+          fill="currentColor"
+          opacity="0.5"
+        />
+        {/* Highway curve sweeping bottom-left → upper-right */}
+        <path
+          d="M-60 920 C120 840 320 740 540 660 C740 580 960 535 1160 465 C1320 405 1390 355 1440 320"
+          stroke="currentColor"
+          strokeWidth="72"
+          strokeLinecap="round"
+        />
+        {/* Road center-line dashes */}
+        <path
+          d="M-60 920 C120 840 320 740 540 660 C740 580 960 535 1160 465 C1320 405 1390 355 1440 320"
+          stroke="white"
+          strokeWidth="5"
+          strokeDasharray="48 28"
+          strokeLinecap="round"
+          opacity="0.28"
+        />
+        {/* Map pin A */}
+        <circle cx="260" cy="210" r="11" fill="currentColor"/>
+        <circle cx="260" cy="210" r="24" stroke="currentColor" strokeWidth="3" opacity="0.55"/>
+        {/* Map pin B */}
+        <circle cx="780" cy="130" r="9" fill="currentColor"/>
+        <circle cx="780" cy="130" r="20" stroke="currentColor" strokeWidth="2.5" opacity="0.55"/>
+        {/* Map pin C */}
+        <circle cx="1230" cy="175" r="7" fill="currentColor"/>
+        <circle cx="1230" cy="175" r="16" stroke="currentColor" strokeWidth="2" opacity="0.55"/>
+        {/* Dashed route connecting pins */}
+        <path
+          d="M260 210 Q520 160 780 130 Q1010 110 1230 175"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeDasharray="10 14"
+          strokeLinecap="round"
+          opacity="0.55"
+        />
+      </svg>
+
+    <div className="container relative py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <h1 className="text-xl font-bold sm:text-2xl">My Trips</h1>
           <OfflineIndicator isOnline={isOnline} queueLength={queueLength} />
         </div>
-        <Button
-          onClick={handleAddTrip}
-          onMouseDown={createRipple}
-          aria-label="Add a new trip"
-          className="shrink-0 overflow-hidden transition-transform active:scale-95"
-        >
-          <Plus className="mr-2 h-4 w-4 transition-transform duration-200 group-hover:rotate-90" aria-hidden="true" />
-          Add Trip
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          <ThemeToggle />
+          <Button
+            onClick={handleAddTrip}
+            onMouseDown={createRipple}
+            aria-label="Add a new trip"
+            className="overflow-hidden transition-transform active:scale-95"
+          >
+            <Plus className="mr-2 h-4 w-4 transition-transform duration-200 group-hover:rotate-90" aria-hidden="true" />
+            Add Trip
+          </Button>
+        </div>
       </div>
 
       {data && data.total > 0 && (
@@ -148,6 +210,7 @@ export function TripsPageContainer() {
         onOpenChange={(open) => { if (!open) setDeletingTripId(null) }}
         onConfirm={handleConfirmDelete}
       />
+    </div>
     </div>
   )
 }

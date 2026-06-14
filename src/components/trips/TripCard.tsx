@@ -37,11 +37,19 @@ export function TripCard({ trip, onEdit, onDelete, onToggleMemorable }: TripCard
   return (
     <div
       className={cn(
-        'flex flex-col h-full rounded-xl border bg-card shadow-sm transition-all duration-200',
-        'hover:-translate-y-1 hover:shadow-lg',
-        trip.isMemorable && 'border-yellow-400 ring-2 ring-yellow-300/60'
+        'relative overflow-hidden flex flex-col h-full rounded-xl border bg-card shadow-sm transition-all duration-200',
+        'hover:-translate-y-1 hover:shadow-[0_8px_24px_hsl(var(--primary)/0.18)] hover:border-primary/30',
       )}
     >
+      {/* Paper fold for memorable trips */}
+      {trip.isMemorable && (
+        <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none" aria-hidden="true">
+          <div className="absolute top-0 right-0 w-0 h-0 border-l-[64px] border-l-transparent border-t-[64px] border-t-primary" />
+          <span className="absolute top-[15px] right-[-3px] text-[7px] font-bold text-primary-foreground rotate-45 tracking-wide uppercase w-[52px] text-center leading-none">
+            Memorable
+          </span>
+        </div>
+      )}
       {/* Body */}
       <div className="flex flex-col gap-3 p-4 flex-1">
         {/* Route + star */}
@@ -61,7 +69,10 @@ export function TripCard({ trip, onEdit, onDelete, onToggleMemorable }: TripCard
           <Button
             variant="ghost"
             size="icon"
-            className="shrink-0 overflow-hidden transition-transform active:scale-95 -mt-0.5"
+            className={cn(
+              'shrink-0 overflow-hidden transition-all duration-300 active:scale-95 -mt-0.5 hover:bg-primary/10',
+              trip.isMemorable ? 'mr-10' : 'mr-0'
+            )}
             onMouseDown={createRipple}
             onClick={handleToggleMemorable}
             aria-label={trip.isMemorable ? 'Unmark as memorable' : 'Mark as memorable'}
@@ -84,6 +95,9 @@ export function TripCard({ trip, onEdit, onDelete, onToggleMemorable }: TripCard
           <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
             <Clock className="h-3 w-3" aria-hidden="true" />
             {formatDate(trip.startTime)}
+            {formatDate(trip.startTime) !== formatDate(trip.endTime) && (
+              <> – {formatDate(trip.endTime)}</>
+            )}
           </span>
           <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
             {formatTime(trip.startTime)} – {formatTime(trip.endTime)}
@@ -108,7 +122,7 @@ export function TripCard({ trip, onEdit, onDelete, onToggleMemorable }: TripCard
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 overflow-hidden px-2 text-xs transition-transform active:scale-95"
+          className="h-7 overflow-hidden px-2 text-xs transition-transform active:scale-95 hover:bg-primary/10 hover:text-primary"
           onMouseDown={createRipple}
           onClick={() => onEdit(trip)}
           aria-label={`Edit trip from ${trip.startLocation} to ${trip.endLocation}`}
@@ -119,7 +133,7 @@ export function TripCard({ trip, onEdit, onDelete, onToggleMemorable }: TripCard
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 overflow-hidden px-2 text-xs text-destructive hover:text-destructive transition-transform active:scale-95"
+          className="h-7 overflow-hidden px-2 text-xs text-destructive hover:!bg-destructive/10 hover:!text-destructive transition-transform active:scale-95"
           onMouseDown={createRipple}
           onClick={() => onDelete(trip.id)}
           aria-label={`Delete trip from ${trip.startLocation} to ${trip.endLocation}`}

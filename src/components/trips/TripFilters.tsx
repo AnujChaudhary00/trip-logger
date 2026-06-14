@@ -97,7 +97,7 @@ export function TripFilters({ filters, onChange }: TripFiltersProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground active:scale-95 overflow-hidden"
+          className="h-8 px-2 text-xs text-muted-foreground active:scale-95 overflow-hidden"
           onMouseDown={createRipple}
           onClick={() => onChange({ memorable: false, hasNotes: false, sort: 'recent' })}
         >

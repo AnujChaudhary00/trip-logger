@@ -36,3 +36,9 @@ prisma/generated/
 
 # docker volumes
 postgres_data/
+
+.claude
+.codemie
+docs/
+CLAUDE.md
+requirement.md

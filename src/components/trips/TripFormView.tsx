@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DateTimePicker } from '@/components/ui/DateTimePicker'
 import type { TripFormValues } from '@/schemas/tripSchema'
 
 interface TripFormViewProps {
@@ -62,11 +63,17 @@ export function TripFormView({ form }: TripFormViewProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="grid gap-1.5">
           <Label htmlFor="startTime">Start Time</Label>
-          <Input
-            id="startTime"
-            type="datetime-local"
-            aria-describedby={errors.startTime ? 'startTime-error' : undefined}
-            {...register('startTime')}
+          <Controller
+            name="startTime"
+            control={control}
+            render={({ field }) => (
+              <DateTimePicker
+                id="startTime"
+                value={field.value}
+                onChange={field.onChange}
+                aria-describedby={errors.startTime ? 'startTime-error' : undefined}
+              />
+            )}
           />
           {errors.startTime && (
             <p id="startTime-error" className="text-sm text-destructive" role="alert">
@@ -77,11 +84,17 @@ export function TripFormView({ form }: TripFormViewProps) {
 
         <div className="grid gap-1.5">
           <Label htmlFor="endTime">End Time</Label>
-          <Input
-            id="endTime"
-            type="datetime-local"
-            aria-describedby={errors.endTime ? 'endTime-error' : undefined}
-            {...register('endTime')}
+          <Controller
+            name="endTime"
+            control={control}
+            render={({ field }) => (
+              <DateTimePicker
+                id="endTime"
+                value={field.value}
+                onChange={field.onChange}
+                aria-describedby={errors.endTime ? 'endTime-error' : undefined}
+              />
+            )}
           />
           {errors.endTime && (
             <p id="endTime-error" className="text-sm text-destructive" role="alert">
