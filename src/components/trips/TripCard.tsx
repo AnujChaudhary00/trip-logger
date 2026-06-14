@@ -37,7 +37,7 @@ export function TripCard({ trip, onEdit, onDelete, onToggleMemorable }: TripCard
   return (
     <div
       className={cn(
-        'flex flex-col rounded-xl border bg-card shadow-sm transition-all duration-200',
+        'flex flex-col h-full rounded-xl border bg-card shadow-sm transition-all duration-200',
         'hover:-translate-y-1 hover:shadow-lg',
         trip.isMemorable && 'border-yellow-400 ring-2 ring-yellow-300/60'
       )}

@@ -50,7 +50,7 @@ export function TripListView({
           {data.trips.map((trip, index) => (
             <div
               key={trip.id}
-              className="animate-slide-in-up"
+              className="animate-slide-in-up h-full"
               style={{ animationDelay: `${index * 40}ms` }}
             >
               <TripCard
