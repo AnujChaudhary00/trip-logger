@@ -4,6 +4,8 @@ import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import * as tripService from '@/lib/tripService'
 import * as offlineStore from '@/lib/offlineStore'
+import { DeleteToast } from '@/components/ui/toasts/DeleteToast'
+import { UpdateToast } from '@/components/ui/toasts/UpdateToast'
 import type { CreateTripInput, Trip, TripFilters, UpdateTripInput } from '@/types/trip'
 
 const TRIPS_KEY = (page: number, filters?: Partial<TripFilters>) => ['trips', page, filters ?? {}]
@@ -107,6 +109,11 @@ export function useUpdateTrip() {
         return { snapshot }
       }
     },
+    onSuccess: (trip) => {
+      if (navigator.onLine && trip) {
+        toast.custom((id) => UpdateToast({ id }), { duration: 4500 })
+      }
+    },
     onError: (_error, _vars, context) => {
       if (context?.snapshot) {
         context.snapshot.forEach(([key, data]) => queryClient.setQueryData(key, data))
@@ -152,6 +159,11 @@ export function useDeleteTrip() {
         toast.info('Saved offline — will sync when connected')
       }
       return { snapshot }
+    },
+    onSuccess: () => {
+      if (navigator.onLine) {
+        toast.custom((id) => DeleteToast({ id }), { duration: 4500 })
+      }
     },
     onError: (_error, _id, context) => {
       if (context?.snapshot) {
