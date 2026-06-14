@@ -4,14 +4,14 @@ import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import * as tripService from '@/lib/tripService'
 import * as offlineStore from '@/lib/offlineStore'
-import type { CreateTripInput, Trip, UpdateTripInput } from '@/types/trip'
+import type { CreateTripInput, Trip, TripFilters, UpdateTripInput } from '@/types/trip'
 
-const TRIPS_KEY = (page: number) => ['trips', page]
+const TRIPS_KEY = (page: number, filters?: Partial<TripFilters>) => ['trips', page, filters ?? {}]
 
-export function useTrips(page = 1) {
+export function useTrips(page = 1, filters?: Partial<TripFilters>) {
   return useQuery({
-    queryKey: TRIPS_KEY(page),
-    queryFn: () => tripService.getTrips(page),
+    queryKey: TRIPS_KEY(page, filters),
+    queryFn: () => tripService.getTrips(page, filters),
   })
 }
 

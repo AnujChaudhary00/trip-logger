@@ -1,15 +1,18 @@
 'use client'
 
 import { TripCard } from '@/components/trips/TripCard'
+import { TripFilters } from '@/components/trips/TripFilters'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
 import { createRipple } from '@/lib/ripple'
-import type { Trip, PaginatedTripsResponse } from '@/types/trip'
+import type { Trip, PaginatedTripsResponse, TripFilters as TripFiltersType } from '@/types/trip'
 
 interface TripListViewProps {
   data: PaginatedTripsResponse | undefined
   page: number
+  filters: TripFiltersType
   onPageChange: (page: number) => void
+  onFiltersChange: (filters: TripFiltersType) => void
   onAddTrip: () => void
   onEdit: (trip: Trip) => void
   onDelete: (tripId: string) => void
@@ -19,36 +22,49 @@ interface TripListViewProps {
 export function TripListView({
   data,
   page,
+  filters,
   onPageChange,
+  onFiltersChange,
   onAddTrip,
   onEdit,
   onDelete,
   onToggleMemorable,
 }: TripListViewProps) {
-  if (!data || data.trips.length === 0) {
-    return <EmptyState onAddTrip={onAddTrip} />
-  }
+  const isEmpty = !data || data.trips.length === 0
+  const noResultsFromFilter = isEmpty && (filters.memorable || filters.hasNotes)
 
   return (
     <div>
-      <div className="flex flex-col gap-3">
-        {data.trips.map((trip, index) => (
-          <div
-            key={trip.id}
-            className="animate-slide-in-up"
-            style={{ animationDelay: `${index * 40}ms` }}
-          >
-            <TripCard
-              trip={trip}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onToggleMemorable={onToggleMemorable}
-            />
-          </div>
-        ))}
-      </div>
+      <TripFilters filters={filters} onChange={onFiltersChange} />
 
-      {data.totalPages > 1 && (
+      {isEmpty ? (
+        noResultsFromFilter ? (
+          <div className="py-16 text-center text-sm text-muted-foreground">
+            No trips match the current filters.
+          </div>
+        ) : (
+          <EmptyState onAddTrip={onAddTrip} />
+        )
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {data.trips.map((trip, index) => (
+            <div
+              key={trip.id}
+              className="animate-slide-in-up"
+              style={{ animationDelay: `${index * 40}ms` }}
+            >
+              <TripCard
+                trip={trip}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onToggleMemorable={onToggleMemorable}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {data && data.totalPages > 1 && (
         <nav
           className="mt-6 flex items-center justify-between"
           aria-label="Trip list pagination"

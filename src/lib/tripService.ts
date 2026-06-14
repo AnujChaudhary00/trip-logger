@@ -5,6 +5,7 @@ import type {
   CreateTripInput,
   PaginatedTripsResponse,
   Trip,
+  TripFilters,
   UpdateTripInput,
 } from '@/types/trip'
 
@@ -37,10 +38,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export function getTrips(page = 1): Promise<PaginatedTripsResponse> {
-  return request<PaginatedTripsResponse>(
-    `/api/trips?page=${page}&pageSize=${PAGE_SIZE}`
-  )
+export function getTrips(page = 1, filters?: Partial<TripFilters>): Promise<PaginatedTripsResponse> {
+  const params = new URLSearchParams({ page: String(page), pageSize: String(PAGE_SIZE) })
+  if (filters?.memorable) params.set('memorable', 'true')
+  if (filters?.hasNotes)  params.set('hasNotes', 'true')
+  if (filters?.sort && filters.sort !== 'recent') params.set('sort', filters.sort)
+  return request<PaginatedTripsResponse>(`/api/trips?${params.toString()}`)
 }
 
 export function createTrip(input: CreateTripInput): Promise<Trip> {

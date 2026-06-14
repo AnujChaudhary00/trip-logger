@@ -34,12 +34,27 @@ export interface UpdateTripInput {
   isMemorable?: boolean
 }
 
+export interface TripStats {
+  memorableCount: number
+  totalDistanceKm: number
+  totalDistanceMiles: number
+}
+
 export interface PaginatedTripsResponse {
   trips: Trip[]
   total: number
   page: number
   pageSize: number
   totalPages: number
+  stats: TripStats
+}
+
+export type TripSortOption = 'recent' | 'oldest' | 'distance_asc' | 'distance_desc'
+
+export interface TripFilters {
+  memorable: boolean
+  hasNotes: boolean
+  sort: TripSortOption
 }
 
 export type OfflineMutationType = 'create' | 'update' | 'delete' | 'toggleMemorable'

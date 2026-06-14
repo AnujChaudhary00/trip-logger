@@ -17,16 +17,41 @@ export async function GET(req: NextRequest) {
   const pageSize = Math.min(100, isNaN(rawPageSize) ? PAGE_SIZE : rawPageSize)
   const skip = (page - 1) * pageSize
 
+  const memorable = searchParams.get('memorable') === 'true'
+  const hasNotes = searchParams.get('hasNotes') === 'true'
+  const sort = searchParams.get('sort') ?? 'recent'
+
+  const orderBy =
+    sort === 'distance_asc'  ? { distance: 'asc'  as const } :
+    sort === 'distance_desc' ? { distance: 'desc' as const } :
+    sort === 'oldest'        ? { createdAt: 'asc' as const } :
+                               { createdAt: 'desc' as const }
+
+  const where = {
+    deviceId,
+    ...(memorable && { isMemorable: true }),
+    ...(hasNotes  && { notes: { not: null as unknown as string } }),
+  }
+
   try {
-    const [trips, total] = await Promise.all([
+    const [trips, total, memorableCount, distanceGroups] = await Promise.all([
       db.trip.findMany({
-        where: { deviceId },
-        orderBy: { createdAt: 'desc' },
+        where,
+        orderBy,
         skip,
         take: pageSize,
       }),
-      db.trip.count({ where: { deviceId } }),
+      db.trip.count({ where }),
+      db.trip.count({ where: { deviceId, isMemorable: true } }),
+      db.trip.groupBy({
+        by: ['distanceUnit'],
+        where: { deviceId },
+        _sum: { distance: true },
+      }),
     ])
+
+    const totalDistanceKm = distanceGroups.find((g) => g.distanceUnit === 'km')?._sum.distance ?? 0
+    const totalDistanceMiles = distanceGroups.find((g) => g.distanceUnit === 'miles')?._sum.distance ?? 0
 
     return NextResponse.json({
       trips: trips.map(serializeTrip),
@@ -34,6 +59,7 @@ export async function GET(req: NextRequest) {
       page,
       pageSize,
       totalPages: Math.ceil(total / pageSize),
+      stats: { memorableCount, totalDistanceKm, totalDistanceMiles },
     })
   } catch {
     return serverError('Failed to fetch trips')

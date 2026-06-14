@@ -18,17 +18,25 @@ import {
   useToggleMemorable,
 } from '@/hooks/useTrips'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
-import type { Trip } from '@/types/trip'
+import type { Trip, TripFilters } from '@/types/trip'
 import type { TripFormValues } from '@/schemas/tripSchema'
+
+const DEFAULT_FILTERS: TripFilters = { memorable: false, hasNotes: false, sort: 'recent' }
 
 export function TripsPageContainer() {
   const [page, setPage] = useState(1)
+  const [filters, setFilters] = useState<TripFilters>(DEFAULT_FILTERS)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
   const [deletingTripId, setDeletingTripId] = useState<string | null>(null)
   const [isOnline, setIsOnline] = useState(true)
 
-  const { data, isLoading } = useTrips(page)
+  const { data, isLoading } = useTrips(page, filters)
+
+  function handleFiltersChange(next: TripFilters) {
+    setFilters(next)
+    setPage(1)
+  }
   const createTrip = useCreateTrip()
   const updateTrip = useUpdateTrip()
   const deleteTrip = useDeleteTrip()
@@ -118,7 +126,9 @@ export function TripsPageContainer() {
         <TripListView
           data={data}
           page={page}
+          filters={filters}
           onPageChange={setPage}
+          onFiltersChange={handleFiltersChange}
           onAddTrip={handleAddTrip}
           onEdit={handleEditTrip}
           onDelete={handleDeleteRequest}
