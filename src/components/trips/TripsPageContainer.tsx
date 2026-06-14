@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { createRipple } from '@/lib/ripple'
 import { TripLoader } from '@/components/ui/TripLoader'
 import { OfflineIndicator } from '@/components/ui/OfflineIndicator'
+import { TripStatsBar } from '@/components/ui/TripStatsBar'
 import { TripListView } from '@/components/trips/TripListView'
 import { TripFormModal } from '@/components/trips/TripFormModal'
 import { DeleteConfirmationModal } from '@/components/trips/DeleteConfirmationModal'
@@ -106,6 +107,10 @@ export function TripsPageContainer() {
           Add Trip
         </Button>
       </div>
+
+      {data && data.total > 0 && (
+        <TripStatsBar stats={data.stats} total={data.total} />
+      )}
 
       {isLoading ? (
         <TripLoader />
