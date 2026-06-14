@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createRipple } from '@/lib/ripple'
+import { TripLoader } from '@/components/ui/TripLoader'
 import { OfflineIndicator } from '@/components/ui/OfflineIndicator'
 import { TripListView } from '@/components/trips/TripListView'
 import { TripFormModal } from '@/components/trips/TripFormModal'
@@ -107,9 +108,7 @@ export function TripsPageContainer() {
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <span className="text-muted-foreground">Loading trips…</span>
-        </div>
+        <TripLoader />
       ) : (
         <TripListView
           data={data}

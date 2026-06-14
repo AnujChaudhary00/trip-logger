@@ -100,3 +100,33 @@
 .animate-pulse-badge {
   animation: pulse-badge 1.8s ease-in-out infinite;
 }
+
+/* Car loader animations */
+@keyframes car-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+@keyframes wheel-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes road-dash {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-40px); }
+}
+
+.animate-car-bounce {
+  animation: car-bounce 0.9s ease-in-out infinite;
+}
+
+.animate-wheel-spin {
+  animation: wheel-spin 0.55s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.animate-road-dash {
+  animation: road-dash 0.65s linear infinite;
+}
